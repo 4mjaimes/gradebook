@@ -10,9 +10,30 @@ namespace GradeBook
             Grades = new List<double>();
             this.Name = Name;
         }
+        public void AddLetterGrade(char letter)
+        {
+            switch (letter)
+            {
+                case 'A':
+                    AddGrade(90);
+                    break;
+                case 'B':
+                    AddGrade(80);
+                    break;
+                case 'C':
+                    AddGrade(70);
+                    break;
+                default:
+                    AddGrade(0);
+                    break;
+            }
+        }
         public void AddGrade(double grade)
         {
-            Grades.Add(grade);
+            if (grade <= 100 && grade >= 0)
+                Grades.Add(grade);
+            else
+                throw new ArgumentException($"Invalid {nameof(grade)}");
         }
         public Statistics GetStatistics()
         {
@@ -21,14 +42,33 @@ namespace GradeBook
             result.Low = double.MaxValue;
             result.High = double.MinValue;
 
-            Grades.ForEach( g => {
+            Grades.ForEach(g =>
+            {
                 result.Low = Math.Min(result.Low, g);
                 result.High = Math.Max(result.High, g);
                 result.Average += g;
-             });
+            });
 
             result.Average /= Grades.Count;
-            
+
+            switch (result.Average)
+            {
+                case var letter when letter >= 90.0:
+                    result.Letter = 'A';
+                    break;
+                case var letter when letter >= 80.0:
+                    result.Letter = 'B';
+                    break;
+                case var letter when letter >= 70.0:
+                    result.Letter = 'C';
+                    break;
+                case var letter when letter >= 60.0:
+                    result.Letter = 'D';
+                    break;
+                default:
+                    result.Letter = 'F';
+                    break;
+            }
             return result;
         }
 
